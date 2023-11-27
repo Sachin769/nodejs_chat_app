@@ -45,7 +45,7 @@ module.exports.insertRegisteration = async (req, resp) => {
             return resp.status(200).json(dataSet);
         }
         let imageFilePath;
-        if (req.files?.user_profile_photo) {
+        if (req.files.user_profile_photo) {
             const fileExtension = path.extname(req.files.user_profile_photo.name).toLowerCase();
             if (fileExtension === ".jpg" || fileExtension === ".jpeg" || fileExtension === ".png") {
                 const inputFile = req.files.user_profile_photo;
