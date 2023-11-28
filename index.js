@@ -33,7 +33,10 @@ app.post("/api/user/registeration", chatController.insertRegisteration);
 app.post("/api/user/login", chatController.userLogin);
 app.get("/api/user/profile", chatController.verifyUserToken, chatController.fetchUserProfile);
 app.get("/api/user/search", chatController.verifyUserToken, chatController.particularUserSearch);
-app.get("/api/user/selected-chat", chatController.verifyUserToken, chatController.selectedChat);
+app.post("/api/user/selected-chat", chatController.verifyUserToken, chatController.selectedChat);
+app.get("/api/user/all-selected-chat-message",chatController.verifyUserToken,chatController.allSelectedChatMessage);
+app.post("/api/user/send-message",chatController.verifyUserToken,chatController.sendMessage);
+app.get("/api/user/all-chat",chatController.verifyUserToken,chatController.allUserChat);
 
 
 //here this is used when we want to confirm backend server is running or not via browser.
@@ -90,7 +93,7 @@ io.on("connection", (socket) => {
         });
     });
 
-    socket.off("setup", () => {
+    socket.on("disconnect", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
     });

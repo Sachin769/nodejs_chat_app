@@ -16,12 +16,12 @@ const Users = mongoose.model("Users",newUser);
 const chatBox = new Schema({
     chat_name : {type: String, required: true},
     users_id:[{type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
-    last_message_id : {type: mongoose.Schema.Types.ObjectId, ref: "Messages"},
+    last_message_id : {type: mongoose.Schema.Types.ObjectId, ref: "Messages", required: false},
     added_by : {type: mongoose.Schema.Types.ObjectId, required: true},
     modified_by: {type: mongoose.Schema.Types.ObjectId, required: true},
     added_date : {type: Date, required: true, default : () => new Date()},
     modified_date : {type: Date, required: true, default: () => new Date()},
-    is_active: {type: Boolean, required: true, default: ()=> new Date()}
+    is_active: {type: Boolean, required: true, default: true}
 })
 const Chat = mongoose.model("Chat",chatBox);
 
@@ -33,7 +33,7 @@ const chatMessages = new Schema({
     modified_by: {type: mongoose.Schema.Types.ObjectId, required: true},
     added_date : {type: Date, required: true, default : () => new Date()},
     modified_date : {type: Date, required: true, default: () => new Date()},
-    is_active: {type: Boolean, required: true, default: ()=> new Date()}
+    is_active: {type: Boolean, required: true, default : true}
 })
 const Messages = mongoose.model("Messages",chatMessages);
 
