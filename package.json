@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "env-cmd -f ./environment/.env.development node index.js",
-    "dev": "env-cmd -f ./environment/.env.development node index.js",
-    "prod": "env-cmd -f ./environment/.env.development node index.js",
+    "dev": "env-cmd -f ./environment/.env.development nodemon index.js",
+    "prod": "env-cmd -f ./environment/.env.production node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

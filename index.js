@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const httpContext = require("express-http-context");
 const fileUpload = require("express-fileupload");
-require("dotenv").config({path: path.join(__dirname,"environment",".env.development")});
+// require("dotenv").config({path: path.join(__dirname,"environment",".env.development")});
 
 const chatController = require("./controllers/chat_controller");
 
@@ -33,6 +33,7 @@ app.post("/api/user/registeration",chatController.insertRegisteration);
 app.post("/api/user/login",chatController.userLogin);
 app.get("/api/user/profile",chatController.verifyUserToken,chatController.fetchUserProfile);
 app.get("/api/user/search",chatController.verifyUserToken,chatController.particularUserSearch);
+app.get("/api/user/selected-chat",chatController.verifyUserToken,chatController.selectedChat);
 
 
 //here this is used when we want to confirm backend server is running or not via browser.

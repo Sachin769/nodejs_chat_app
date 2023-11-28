@@ -132,3 +132,23 @@ module.exports.particularUserSearch = async (req, resp) => {
         resp.status(422).json(dataSet);
     }
 }
+
+module.exports.selectedChat = async (req,resp) => {
+    try{
+        const findParticularChat = await chatModal.fetchSelectedChat(req.body);
+        if(findParticularChat.code === 500){
+            return resp.status(500).json(findParticularChat);
+        }
+        if(findParticularChat.length <= 0){
+            const createParticularChat = await chatModal.createNewChat(req.body);
+            if(createParticularChat.code === 500){
+                return resp.status(500).json(createParticularChat);
+            }
+        }
+        dataSet = response(200,"Chat Created Success");
+        resp.status(200).json(dataSet);
+    }catch(e){
+        dataSet = response(422,"Something Went Wrong",e.message);
+        resp.status(422).json(dataSet);
+    }
+}
