@@ -86,7 +86,7 @@ module.exports.fetchUserProfileViaLoginDetails = async (req,resp) => {
             _id : loginDetails.user_id,
             is_active : true
         }
-        const fetchQuery = await dbSchema.Users.findById(filter);
+        const fetchQuery = await dbSchema.Users.findById(filter).lean();
         return fetchQuery;
     }catch(e){
         return response(500,"Error No. 234",e.message);
@@ -103,7 +103,7 @@ module.exports.fetchUserSearch = async (req, resp) => {
             ],
             is_active: true
         }
-        const fetchQuery = await dbSchema.Users.find(filter).find({ _id: { $ne: loginDetails.user_id } });
+        const fetchQuery = await dbSchema.Users.find(filter).find({ _id: { $ne: loginDetails.user_id } }).lean();
         return fetchQuery;
     } catch (e) {
         return response(500, "Error No. 5", e.message);

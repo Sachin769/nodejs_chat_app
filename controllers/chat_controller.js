@@ -125,6 +125,10 @@ module.exports.particularUserSearch = async (req, resp) => {
         if (fetchSearchList.code === 500) {
             return resp.status(500).json(fetchSearchList);
         }
+        console.log("fetchSearchList",fetchSearchList);
+        for(let i=0;i<fetchSearchList.length;i++){
+            fetchSearchList[i].profile_pic = process.env.IMAGE_FILE_PATH + "/" + fetchSearchList[i].profile_pic;
+        }
         dataSet = response(200, "User Search List", fetchSearchList);
         resp.status(200).json(dataSet);
     } catch (e) {
