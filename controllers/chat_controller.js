@@ -138,6 +138,7 @@ module.exports.particularUserSearch = async (req, resp) => {
 
 module.exports.selectedChat = async (req, resp) => {
     try {
+        console.log("requested body during fetch Chat or create a new chat", req.body);
         const findParticularChat = await chatModal.fetchSelectedChat(req.body);
         if (findParticularChat?.code === 500) {
             return resp.status(500).json(findParticularChat);
@@ -147,9 +148,7 @@ module.exports.selectedChat = async (req, resp) => {
             resp.status(200).json(dataSet);
         }
         if (!(findParticularChat)) {
-            console.log("hii");
             const createParticularChat = await chatModal.createNewChat(req.body);
-            console.log("createdChat",createParticularChat);
             if (createParticularChat.code === 500) {
                 return resp.status(500).json(createParticularChat);
             }

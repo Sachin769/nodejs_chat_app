@@ -112,9 +112,10 @@ module.exports.fetchUserSearch = async (req, resp) => {
 
 module.exports.fetchSelectedChat = async (req, resp) => {
     try {
+        const loginDetails = httpContext.get("loginDetails");
         const filter = {
             $and: [
-                { users_id: { $elemMatch: { $eq: req.sender_id } } },
+                { users_id: { $elemMatch: { $eq: loginDetails.user_id } } },
                 { users_id: { $elemMatch: { $eq: req.reciever_id } } },
             ],
             // $and: [
@@ -133,10 +134,9 @@ module.exports.fetchSelectedChat = async (req, resp) => {
 module.exports.createNewChat = async (req, resp) => {
     try {
         const loginDetails = httpContext.get("loginDetails");
-        console.log("loginDetails", loginDetails);
         const insertedObject = new dbSchema.Chat({
             chat_name: "Sender",
-            users_id: [req.sender_id, req.reciever_id],
+            users_id: [loginDetails.user_id, req.reciever_id],
             added_by: loginDetails.user_id,
             modified_by: loginDetails.user_id
         })
@@ -180,9 +180,7 @@ module.exports.insertSenderMessage = async (req, resp) => {
 
 module.exports.updateLastMessage = async (chatId, insertedMessage, resp) => {
     try {
-        console.log("req.",insertedMessage);
         const loginDetails = httpContext.get("loginDetails");
-        console.log("loginDetails",loginDetails);
         const filter = {
             _id: chatId
         }
@@ -194,7 +192,6 @@ module.exports.updateLastMessage = async (chatId, insertedMessage, resp) => {
         const options = {
             new: true
         }
-        console.log("filter",filter,update,options);
         const updateQuery = await dbSchema.Chat.findByIdAndUpdate(filter, update, options);
         return updateQuery;
     } catch (e) {
@@ -204,15 +201,15 @@ module.exports.updateLastMessage = async (chatId, insertedMessage, resp) => {
 
 module.exports.fetchAllUserChat = async (req,resp) => {
     try{
+        const loginDetails = httpContext.get("loginDetails");
         const filter = {
             $or: [
-                { users_id: { $elemMatch: { $eq: req.sender_id } } },
+                { users_id: { $elemMatch: { $eq: loginDetails.user_id } } },
                 { users_id: { $elemMatch: { $eq: req.reciever_id } } },
             ],
             is_active: true
         }
         const fetchQuery = await dbSchema.Chat.find(filter).populate({path: "users_id",modal: "Users",select:"full_name email profile_pic"}).populate("last_message_id","sender message");
-        console.log("fetchQuery",fetchQuery);
         return fetchQuery;
     }catch(e){
         return response(500,"Error In Modal. 435",e.message);
