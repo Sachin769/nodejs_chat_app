@@ -98,3 +98,31 @@ io.on("connection", (socket) => {
         socket.leave(userData._id);
     });
 });
+
+// // var myUser = "1234";
+
+// io.on("connection",(socket)=>{
+//     console.log("Socket Connection");
+//     //user connection with socket
+//     socket.on("setup",(userId)=>{
+//         console.log("userId=",userId);
+//         socket.join(userId);
+//         socket.emit("connected");
+//     })
+
+//     socket.on("join chat",(room)=>{
+//         console.log("room=",room);
+//         socket.join(room)
+//     })
+
+//     socket.on("new message",(newMessageRecieved)=>{
+//         console.log("newMessage recieved",newMessageRecieved);
+//         const allUsers = newMessageRecieved.users;
+//         const message = newMessageRecieved.message;
+//         const myUser = newMessageRecieved.users[0];
+//         allUsers.forEach((user)=>{
+//             if(myUser===user) return;
+//             socket.in(user).emit("message recieved",message);
+//         })
+//     })
+// })

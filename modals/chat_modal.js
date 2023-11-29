@@ -201,3 +201,20 @@ module.exports.updateLastMessage = async (chatId, insertedMessage, resp) => {
         return response(500, "Error In Modal 45678", e.message);
     }
 }
+
+module.exports.fetchAllUserChat = async (req,resp) => {
+    try{
+        const filter = {
+            $or: [
+                { users_id: { $elemMatch: { $eq: req.sender_id } } },
+                { users_id: { $elemMatch: { $eq: req.reciever_id } } },
+            ],
+            is_active: true
+        }
+        const fetchQuery = await dbSchema.Chat.find(filter).populate({path: "users_id",modal: "Users",select:"full_name email profile_pic"}).populate("last_message_id","sender message");
+        console.log("fetchQuery",fetchQuery);
+        return fetchQuery;
+    }catch(e){
+        return response(500,"Error In Modal. 435",e.message);
+    }
+}
