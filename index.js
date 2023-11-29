@@ -68,18 +68,18 @@ console.log("below code socket connection shoudl be connected");
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
-    socket.on("setup", (userData) => {
-        console.log("user_Data", userData);
-        socket.join(userData._id);
+    socket.on("setup", (userId) => {
+        console.log("user_Data", userId);
+        socket.join(userId);
         socket.emit("connected");
     });
 
-    socket.on("join chat", (room) => {
-        socket.join(room);
-        console.log("User Joined Room: " + room);
+    socket.on("join chat", (roomId) => {
+        socket.join(roomId);
+        console.log("User Joined Room: " + roomId);
     });
-    socket.on("typing", (room) => socket.in(room).emit("typing"));
-    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+    socket.on("typing", (roomId) => socket.in(roomId).emit("typing"));
+    socket.on("stop typing", (roomId) => socket.in(roomId).emit("stop typing"));
 
     socket.on("new message", (newMessageRecieved) => {
         var chat = newMessageRecieved.chat;
@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("USER DISCONNECTED");
-        socket.leave(userData._id);
+        socket.leave(userId);
     });
 });
 
