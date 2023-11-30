@@ -34,9 +34,9 @@ app.post("/api/user/login", chatController.userLogin);
 app.get("/api/user/profile", chatController.verifyUserToken, chatController.fetchUserProfile);
 app.get("/api/user/search", chatController.verifyUserToken, chatController.particularUserSearch);
 app.post("/api/user/selected-chat", chatController.verifyUserToken, chatController.selectedChat);
-app.get("/api/user/all-selected-chat-message",chatController.verifyUserToken,chatController.allSelectedChatMessage);
-app.post("/api/user/send-message",chatController.verifyUserToken,chatController.sendMessage);
-app.get("/api/user/all-chat",chatController.verifyUserToken,chatController.allUserChat);
+app.get("/api/user/all-selected-chat-message", chatController.verifyUserToken, chatController.allSelectedChatMessage);
+app.post("/api/user/send-message", chatController.verifyUserToken, chatController.sendMessage);
+app.get("/api/user/all-chat", chatController.verifyUserToken, chatController.allUserChat);
 
 
 //here this is used when we want to confirm backend server is running or not via browser.
@@ -64,36 +64,50 @@ const io = require("socket.io")(server, {
     },
 });
 
-console.log("below code socket connection shoudl be connected");
+console.log("below code socket connection should be connected");
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
     socket.on("setup", (userId) => {
         console.log("user_Data", userId);
         socket.join(userId);
-        socket.emit("connected");
+        socket.emit("connected",userId);
     });
 
     socket.on("join chat", (roomId) => {
+        console.log("roomId",roomId);
         socket.join(roomId);
         console.log("User Joined Room: " + roomId);
     });
     socket.on("typing", (roomId) => socket.in(roomId).emit("typing"));
     socket.on("stop typing", (roomId) => socket.in(roomId).emit("stop typing"));
 
+    // socket.on("new message", (newMessageRecieved) => {
+    //     var chat = newMessageRecieved.chat;
+
+    //     if (!chat.users) return console.log("chat.users not defined");
+
+    //     chat.users.forEach((user) => {
+    //         if (user._id == newMessageRecieved.sender._id) return;
+
+    //         socket.in(user._id).emit("message recieved", newMessageRecieved);
+    //     });
+    // });
+
+
     socket.on("new message", (newMessageRecieved) => {
-        var chat = newMessageRecieved.chat;
-
-        if (!chat.users) return console.log("chat.users not defined");
-
-        chat.users.forEach((user) => {
-            if (user._id == newMessageRecieved.sender._id) return;
-
-            socket.in(user._id).emit("message recieved", newMessageRecieved);
+        console.log("new Message recieved",newMessageRecieved);
+        // const message = newMessageRecieved.message;
+        const allUsersId = newMessageRecieved.users_id;
+        const senderId = newMessageRecieved.sender_id;
+        allUsersId.forEach((userId) => {
+            if (senderId == userId) return;
+            socket.in(userId).emit("message received", newMessageRecieved);
+            console.log("hii");
         });
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", (userId) => {
         console.log("USER DISCONNECTED");
         socket.leave(userId);
     });

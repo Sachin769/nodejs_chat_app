@@ -64,7 +64,7 @@ module.exports.insertRegisteration = async (req, resp) => {
         if (updateToken.code === 500) {
             return resp.status(500).json(updateToken);
         }
-        dataSet = response(200, "Inserted Successfully", { token });
+        dataSet = response(200, "Inserted Successfully", { token: token, user_id: insertNewRegisteration._id });
         resp.status(200).json(dataSet);
     } catch (e) {
         dataSet = response(422, "Something Went Wrong", e.message);
@@ -92,7 +92,7 @@ module.exports.userLogin = async (req, resp) => {
             if (updateToken.code === 500) {
                 return resp.status(500).json(updateToken);
             }
-            dataSet = response(200, "Login Successfully", { token });
+            dataSet = response(200, "Login Successfully", { token: token, user_id: fetchLoginData._id });
             resp.status(200).json(dataSet);
         }
     } catch (e) {
@@ -100,6 +100,7 @@ module.exports.userLogin = async (req, resp) => {
         resp.status(422).json(dataSet);
     }
 }
+
 
 module.exports.fetchUserProfile = async (req, resp) => {
     try {
@@ -123,7 +124,7 @@ module.exports.particularUserSearch = async (req, resp) => {
     try {
         const fetchSearchList = await chatModal.fetchUserSearch(req.query);
         if (fetchSearchList.code === 500) {
-            return resp.status(500).json(fetchSearchList);
+            return resp.status(500).json();
         }
         for (let i = 0; i < fetchSearchList.length; i++) {
             fetchSearchList[i].profile_pic = process.env.IMAGE_FILE_PATH + "/" + fetchSearchList[i].profile_pic;
@@ -144,7 +145,7 @@ module.exports.selectedChat = async (req, resp) => {
             return resp.status(500).json(findParticularChat);
         }
         if (findParticularChat) {
-            dataSet = response(200, "Fetch Chat Sucess",findParticularChat);
+            dataSet = response(200, "Fetch Chat Sucess", findParticularChat);
             resp.status(200).json(dataSet);
         }
         if (!(findParticularChat)) {
@@ -152,7 +153,7 @@ module.exports.selectedChat = async (req, resp) => {
             if (createParticularChat.code === 500) {
                 return resp.status(500).json(createParticularChat);
             }
-            dataSet = response(200, "Chat Created Success",createParticularChat);
+            dataSet = response(200, "Chat Created Success", createParticularChat);
             resp.status(200).json(dataSet);
         }
     } catch (e) {
@@ -175,35 +176,54 @@ module.exports.allSelectedChatMessage = async (req, resp) => {
     }
 }
 
-module.exports.sendMessage = async (req,resp) => {
-    try{
+module.exports.sendMessage = async (req, resp) => {
+    try {
         const insertSenderMessage = await chatModal.insertSenderMessage(req.body);
-        if(insertSenderMessage.code === 500){
+        if (insertSenderMessage.code === 500) {
             return resp.status(500).json(insertSenderMessage);
         }
-        const updateLastMessage = await chatModal.updateLastMessage(req.body.chat_id,insertSenderMessage);
-        console.log("udpateLastmessag",updateLastMessage);
-        if(updateLastMessage.code === 500){
+        console.log("insertSender",insertSenderMessage);
+        const updateLastMessage = await chatModal.updateLastMessage(req.body.chat_id, insertSenderMessage);
+        // console.log("udpateLastmessag",updateLastMessage);
+        if (updateLastMessage.code === 500) {
             return resp.status(500).json(updateLastMessage);
         }
-        dataSet = response(200,"Inserted Sender Message Successfully");
+        const responseForSocketObject = {
+            message: insertSenderMessage.message,
+            users_id: updateLastMessage.users_id,
+            chat_id: updateLastMessage._id,
+            sender_id: insertSenderMessage.sender,
+            received_message: {
+                _id: insertSenderMessage._id,
+                sender: insertSenderMessage.sender,
+                message: insertSenderMessage.message,
+                chat_id: insertSenderMessage.chat_id,
+                added_by: insertSenderMessage.added_by,
+                modified_by: insertSenderMessage.modified_by,
+                is_active: true,
+                added_date: insertSenderMessage.added_date,
+                modified_date: insertSenderMessage.modified_date,
+                __v: 0
+            }
+        }
+        dataSet = response(200, "Inserted Sender Message Successfully", responseForSocketObject);
         resp.status(200).json(dataSet);
-    }catch(e){
-        dataSet = response(422,"Something Went Wrong",e.message);
+    } catch (e) {
+        dataSet = response(422, "Something Went Wrong", e.message);
         resp.status(422).json(dataSet);
     }
 }
 
-module.exports.allUserChat = async (req,resp) => {
-    try{
+module.exports.allUserChat = async (req, resp) => {
+    try {
         const fetchAllUserChat = await chatModal.fetchAllUserChat(req.query);
-        if(fetchAllUserChat.code === 500){
+        if (fetchAllUserChat.code === 500) {
             return resp.status(500).json(fetchAllUserChat);
         }
-        dataSet = response(200,"All User Chat List",fetchAllUserChat);
+        dataSet = response(200, "All User Chat List", fetchAllUserChat);
         resp.status(200).json(dataSet);
-    }catch(e){
-        dataSet = response(422,"Something Went Wrong",e.message);
+    } catch (e) {
+        dataSet = response(422, "Something Went Wrong", e.message);
         resp.status(422).json(dataSet);
     }
 }
