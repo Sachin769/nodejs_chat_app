@@ -64,7 +64,6 @@ const io = require("socket.io")(server, {
     },
 });
 
-console.log("below code socket connection should be connected");
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
@@ -93,7 +92,6 @@ io.on("connection", (socket) => {
     //         socket.in(user._id).emit("message recieved", newMessageRecieved);
     //     });
     // });
-
 
     socket.on("new message", (newMessageRecieved) => {
         console.log("new Message recieved",newMessageRecieved);
